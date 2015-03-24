@@ -1,0 +1,50 @@
+John Wrenn
+CSC544-HW3
+
+1. Show that a turing machine with a doubly infinite tape is equivalent
+    to a turing machine with a singly infinite tape.
+
+We must show that each machine may simulate the other. A doubly infinite
+turing machine may simulate a singly infinite turing machine by ignoring
+half of its tape.
+
+For the reverse, we translate the tape of the doubly infinite taped
+machine, D, to the tape of the singly infinite machine, S, under the
+following conditions:
+    1. Copy the right half of D's input to S's tape.
+    2. Mark the end of the S's input with a special symbol ∉ Γ
+    3. Copy the left half of D's input to S's tape, starting after the
+       special symbol previously written.
+In instances in which D would move to the left of the starting symbol,
+move the head of S to the right of the tape divisor. While D is to the
+left of the starting symbol, replace the leftward movements of S with
+rightward movements, and visa versa.  
+
+Alternatively--I don't have this idea completely fleshed out--create an
+S for D whereby S(Γ) = D(Γ) × D(Γ).
+------------------------------------------------------------------------
+2. Show the the set of decidable languages is closed under 
+    complementation.
+Given a decider M for a decidable language A, construct a machine M' for
+A', such that:
+    1. Run M on input ⟨A'⟩
+    2. If M rejects, then accept
+        If M accepts, then reject
+------------------------------------------------------------------------
+3. Where,
+    A={⟨R,S⟩|R and S are regular expressions and L(R) ⊆ L(S)}
+    show that A is decidable.
+
+Given that L(R) ⊆ L(S) iff L(R) ∪ L(S) = L(S), construct a machine T,
+such that
+    L(T) = L(R) ∪ L(S)
+since regular expressions are closed under union, L(T) will also be a
+regular expression.
+
+Construct a decider M for A such that:
+    1. Run EQ_DFA on input ⟨T,S⟩
+    2. If EQ_DFA accepts, then accept,
+        If EQ_DFA rejects, then reject.
+        
+Since EQ_DFA (as given in the lecture slides) is decidable, the machine
+described above is also trivially decidable.
