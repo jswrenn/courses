@@ -1,0 +1,62 @@
+Lambda Calculus
+
+Observation: Reduction between languages do not always exit.
+
+Another Model: Lambda Calc, bitches!
+
+Introduce l calcIntro prim andrecurs fun
+turing machine implements u recursive functions
+turing machines implement y clalc
+urecursive can implement turing machine
+
+Lambda Calc 101
+λx.E
+
+
+<function>    ::= λ<var>.<expression>
+<expression>  ::= <var>
+                | <function>
+                | <application>
+<application> ::= <expression><expression>
+
+SImple Rules
+    alpha conversion
+    beta reduction
+    n conversion
+    
+Notation:
+    Let E and E be a λ expression and v a variable, then E[E'/v] denotes expression resulting from substituting E' for all occurrences of the variable v in the expression E.
+    
+Example:
+    E = x+1
+    E'= 2
+    E[E'/x] = E[2/x] = x+1[2/x] = 2+1
+    
+
+a conversion
+    States that we are allowed to rename variables without changing hte meaning of a function Formally:
+        λv.E = λw.E[w/v]
+    as long as w does not appear freely in E and w is not bound by a λ in E whevever it replaces a v. Here, v and w are variables and E is a λ expression
+    
+b reduction
+    Expresses idea of function application, Formally:
+        (λv.E)E' = E[E/v],
+    Take actual parameter, bind it to formal parameter, do substitution
+    
+Example:
+    (λm.m+1)1 = m+1[1/m] = 1+1 = 2
+    
+Exercises
+    (λx.x)2
+        E[e'/x]=x[2/x]=2
+    (λx.(x,x))2
+        E[E'/x] = (x,x)[2/x] = (2,2)
+    (λ(x,y).(x,y,z))(5,3)
+        E[E'/x] = 
+
+    A loopity loop:
+    (λx.(x x))(λx.(x x))
+        b   x x [(λx.x x)/x] = (λx.x x)(λx. x x)
+    
+
+
