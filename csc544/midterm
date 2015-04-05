@@ -1,0 +1,235 @@
+1. Why do we think of decidable language as representing algorithms?
+
+Algorithms are recepies of computation that halt, usually with some output. The set of machines that are guaranteed to halt is the set of 'turing decidable' machines.
+
+
+2. What do we mean when we say that two machines are equivalent?
+
+Roughly speaking, we say two machines are equivalent if, for every possible input, they produce the same output. 
+
+
+3. In your own words; describe the halting problem.
+
+It is the problem of deciding whether an arbitrary program will halt. Specifically, it refers to the fact that it is impossible to design a decidable turing machine whose input is an arbitrary turing machine T and an input w and HALT-ACCEPT if T will halt on w and HALT-REJECT if T does not.
+
+
+4. In your own words describe the Church-Turing thesis.
+
+The Church-Turing thesis is the class of computable problems (anything that one could do with a pencil and paper) are computable by the class of equivalent machines that include Church's lambda calculus and Alan Turing's automatic machines.
+
+
+5. Compute the normal form of the following λ-expression,
+        (λx. λy. x y) (λx. x + 1) 3
+        
+Computations:
+    (λx. λy. x y) (λx. x + 1) 3
+    (λ(λx. x + 1). λy. x y) 3
+    (λ(λx. x + 1). λy. (λx. x + 1) y) 3
+    (λy. (λx. x + 1) y) 3
+    (λ3. (λx. x + 1) y) 
+    (λ3. (λx. x + 1) 3) 
+    (λx.x+1) 3
+
+
+6. Show that the language
+        L = {w | w has an even number of 0s, or 1s, or both}
+    is a regular language.
+
+Proof by construction. We construct a regular expression for strings with an even number of zeros:
+    1*•(0•1*•0)*)+
+Exchange the ones for zeros, and visa versa, and we get the regular expression for strings with an even number of ones:
+    0*•(1•0*•1)*)+
+Since regular languages are closed under union, we can construct a regular expression for either of the above cases using a union: 
+    (1*•(0•1*•0)*)+) | (0*•(1•0*•1)*)+)
+    
+    
+7. What do we mean when we say that the language L is not Turing-recognizable?
+
+We mean to say that it is impossible to construct a machine operates on a string s and HALT-ACCEPTS on s when s is in L. 
+
+
+8. What does M accepts the string w mean when M is a nondeterministic automaton or Turing machine?
+
+We mean that at least one branch of computation of M<w> terminates in an accepting state.
+
+------------------------------------------------------------------------
+
+Part B
+
+1. Given the language:
+    L = {wwᴿ | w ∈ {a, b}∗}
+where wR is the reverse of the string w:
+
+A) Show that L is not regular. 
+
+A property of strings in this language is that it will contain an even number of 'a's and 'b's. We'll show that such a language cannot be regular using a proof by contradiction. If we assume that L is regular, it holds that the pumping lemma holds for L. Let's consider palindromes in the form aⁿbⁿaⁿ. The pumping lemma states that we should be able to split such a string into three components, x y and z. If we split the string thusly:
+    x = ε
+    y = aᵏbⁿaᵏ
+    z = ε
+Pumping y would not result in palindromes (although it would produce a string that could be divided into palindromes).
+
+If the string were split as:
+    x = aⁿbⁿ
+    y = aᵏ
+    z = ε
+Or as:
+    x = aⁿ
+    y = bⁿaᵏ
+    z = ε
+Pumping y would result in more 'a's after the 'b's than before the 'b's.    
+    
+If the string were split as:
+    x = ε
+    y = aᵏ
+    z = bⁿaⁿ
+Or as:
+    x = ε
+    y = aᵏbⁿ
+    z = aⁿ
+Pumping y would result in more 'a's before the 'b's than after the 'b's.
+
+If the string were split as:
+    x = aⁿ
+    y = bⁿ
+    z = aᵏ
+Pumping y would result in palindromes, but only for even numbers of n.
+
+Thus, there exists no partitioning scheme for which s, after pumping, could still be in L. As such, L is not a regular language.
+    
+
+B) Show that L is context-free.
+
+We construct a context free grammar for L:
+    S* = a T a
+       | b T b
+    T  = a
+       | b
+   
+   
+2. Let L be the following language:
+        L = {aⁿ bⁿ (ab)ⁿ | n ≥ 0}
+    and consider the following λ-expression:
+        ITER = λx. (STEP 0 [])
+        STEP = λnk. (STEP (n + 1) ((GEN n) :: k))
+         GEN = λn. APPEND (APPEND (ASTRING n) (BSTRING n)) (ABSTRING n)
+      APPEND = λxy. (x = [])? y : (HD x) :: (APPEND (TL x) y)
+          HD = λx :: y. x
+          TL = λx :: y. y
+     ASTRING = λn. (n = 0)? [] : (a :: (ASTRING (n − 1))
+     BSTRING = λn. (n = 0)? [] : (b :: (BSTRING (n − 1))
+    ABSTRING = λn. (n = 0)? [] : (a :: b :: (ABSTRING (n − 1))
+
+We will first prove the correctness of ASTRING, BSTRING, and ABSTRING.
+
+The function ASTRING takes an non-negative integer argument n and returns a string of n instances of the character 'a'. We already know that church-encoded numbers are a well-founded relation (i.e., 0≺1≺2≺...), and it follows a* is also a well-ordered set:
+    ε ≺ a ≺ aa ≺ aaa ≺ aaaa ≺ ...
+This is a well-founded relation because it contains a minimal element (the empty string) and we can create a successor function for any S in the set (using either APPEND or '::'). Thus we can make the same statements for BSTRING, and ABSTRING:
+    ε ≺ b ≺ bb ≺ bbb ≺ bbbb ≺ ...
+    ε ≺ ab ≺ abab ≺ ababab ≺ abababab ≺ ...
+Since we may assume that GEN is correct, I'll spare the  details, but it is necessary to perform a structural induction proof over ASTRING, BSTRING, and ABSTRING. It follows that the strings generated by GEN are themselves members of a well-ordered set. 
+    ε ≺ abab ≺ aabbabab ≺ aaabbbababab ≺ ... ≺ aⁿ bⁿ (ab)ⁿ 
+    
+In proving that ITER is correct, I'll refer to the strings produced by GEN as GEN₀, GEN₁, GEN₂, GEN₃, etc. 
+The first iteration--the base case, so to speak--is evaluated below:
+ITER = λx. (STEP 0 []) 5
+     = λ5. (STEP 0 [])
+     = λ5. (λnk. (STEP (n + 1) ((GEN n) :: k)) 0 [])
+     = λ5. (λ0[]. (STEP (0 + 1) ((GEN 0) :: [])) 0 [])
+     = λ5. (λ0[]. (STEP (1) (GEN₀::[])))
+And the next iteration:
+     = λ5. (λ0[]. (STEP (1) (GEN₀::[])))
+     = λ5. (λ0[]. (λnk. (STEP (n + 1) ((GEN n) :: k)) (1) (GEN₀::[])))
+     = λ5. (λ0[]. (λ(1)((GEN₀::[])). (STEP (1 + 1) ((GEN 1)::GEN₀::[]))))
+     = λ5. (λ0[]. (STEP 2 GEN₁::GEN₀::[]))
+Yields GEN₁::GEN₀::[].
+
+We'll assume that the n recursive call of STEP will generate a pair STEPₙ, (n GENₙ::⋯GEN₁::GEN₀::[]), and show that ITER produces the correct result for the n+1 recursive call of STEP.
+
+ITER = λx. (STEP STEPₙ) 5
+     = λ5. (λSTEPₙ.STEP (n+1) (GENₙ::⋯GEN₁::GEN₀::[]))
+     = λ5. (λSTEPₙ.λnk.(STEP (n + 1)((GEN n) :: k)) (n+1) (GENₙ::⋯GEN₁::GEN₀::[]))
+     = λ5. (λSTEPₙ.λ(n+1)(GENₙ::⋯GEN₁::GEN₀::[]).(STEP (n + 1)((GEN n) :: k)))
+     = λ5. (λSTEPₙ.λ(n+1)(GENₙ::⋯GEN₁::GEN₀::[]).(STEP ((n+1) + 1)((GEN n)::GENₙ::⋯GEN₁::GEN₀::[])))
+     = λ5. (λSTEPₙ.λ(n+1)(GENₙ::⋯GEN₁::GEN₀::[]).(STEP (n+2) (GENₙ₊₁::GENₙ::⋯GEN₁::GEN₀::[]))
+     
+As expected, GENₙ::⋯GEN₁::GEN₀::[] is succeeded by GENₙ₊₁::GENₙ::⋯GEN₁::GEN₀::[].
+
+
+3. Show that a single tape Turing machine with multiple heads precisely recognizes the Turing-recognizable languages.
+
+A) For any single-tape single-head turing machine M, there exists a single-tape multi-head turing machine M' that can simulate it.
+
+Using the single-tape single-head turing machine TM that simulate an M, we can produce M' by ignoring that M' has the capability of more than one head (i.e., dock the heads at a cell, and perform operations using them. 
+
+B) For any single-tape multi-head turing machine M, there exists a single-tape single-head turing machine M' that can simulate it.
+
+We construct a multi-track turing machine M'' that may simulate any single-tape multi-head turing machine M, and initialize each tape of M'' with the same input string. For any movement of the ith head of M, we move the head of track i of M'' identically. Similarly, for any read or write operation performed by the ith head of M, the head of track i of M'' performs the same operation. For any write operation performed by the ith head of M onto a cell j, the heads of each track of M'' perform the same operation onto their cell j, thus keeping all k tracks isomorphic. As we have previously shown that a multi-track turing machine may be simulated by a single-track turing machine, and have now demonstrated that a single-tape multi-head turing machine may be simulated by a multi-track turing machine, it follows that a single-tape multi-head turing machine may be simulated by a single-tape single-head turing machine.
+
+The details of how this simulation is carried out is of particular interest. Do we treat concurrent operations as a recipe, and perform them in a linear, deterministic manner? Or alternatively, a linear non-deterministic manner? This question is of interest to systems that attempt make statements regarding the linearizability of operations.
+
+
+4. Show that the language
+        L = { [ᵏ (ᵐ )ᵐ ]ᵏ | k ≥ 0 ∧ k ≥ m ≥ 0}
+    is recursively enumerable.
+    
+We can demonstrate that L is recursively enumerable using a proof by construction. The algorithm described below is a decider for whether a given string--represented as a queue of tokens--is in L. As the set of decidable languages is a subset of the set of recursively enumerable languages, it follows that L is recursively enumerable. 
+
+    a ≔ 0
+    b ≔ 0
+    c ≔ 0
+    d ≔ 0
+
+    label count_lbrackets:
+    while |tokens| ≠ 0:
+        if peek(tokens) = '[':
+            a ≔ a + 1
+            pop(tokens)
+        else-if peek(tokens) = '(':
+            goto count_lparens
+        else-if peek(tokens) = ']':
+            goto count_rbrackets
+        else:
+            HALT-REJECT
+        
+    label count_lparens:
+    while |tokens| ≠ 0:
+        if peek(tokens) = '(':
+            b ≔ b + 1
+            pop(tokens)
+        else-if peek(tokens) = ')':
+            goto count_rparens
+        else:
+            HALT-REJECT
+        
+    label count_rparens:
+    while |tokens| ≠ 0:
+        if peek(tokens) = ')':
+            c ≔ c + 1
+            pop(tokens)
+        else-if peek(tokens) = ']':
+            goto count_rbrackets
+        else:
+            HALT-REJECT
+            
+    label count_rbrackets:
+    while |tokens| ≠ 0:
+        if peek(tokens) = ']':
+            d ≔ d + 1
+            pop(tokens)
+        else:
+            HALT-REJECT
+       
+    if a = d:
+     ∧ b = c:
+     ∧ a ≥ b:
+        HALT-ACCEPT
+    else:    
+        HALT-REJECT
+
+
+5. Consider the problem of determining whether a Turing machine M on an input w ever attempts to move its head left when its head is on the left-most tape cell. Let
+        L = { M, w | M on w tries to move its head left from the leftmost tape cell, at some point in its computation}.
+    Show that L is undecidable.
+
+We'll assume that L is decidable, and construct a decider ML that, by simulating M, a turing machine for L, on w, HALT-REJECTS if the simulated head of M attempts to move to the cell to the left of the input range w (we can mark this cell with a sigil, '#') and otherwise HALT-ACCEPTs. Since ML is a decider, computation must terminate in either a HALT-ACCEPT or HALT-REJECT. However, its decision is directly a result of the outcome of the simulation of M. We can say that ML is semi-decidable in that the incidence of a particular configuration of M halts ML with a reject state. Otherwise, we continue the computation of M. Since it is impossible to check for the incidence of a configuration of M until all configurations of M have been enumerated (that is, M has halted), it cannot be said that HALT-ACCEPT outcome of ML is semi-decidable. To do so would be to solve the halting problem, and therein lies the contradiction.
+
