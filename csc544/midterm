@@ -1,3 +1,6 @@
+John Wrenn
+CSC544-Midterm
+
 1. Why do we think of decidable language as representing algorithms?
 
 Algorithms are recepies of computation that halt, usually with some output. The set of machines that are guaranteed to halt is the set of 'turing decidable' machines.
