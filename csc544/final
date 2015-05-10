@@ -5,7 +5,7 @@
 
 2. True or false: If L is an NP-complete language and M is polynomial-time reducible to L, that is M ≤ L, then M is also an NP-complete language.
 
-    False. If L is an NP-complete language, it means that there exists a polynomial-time transformation from any language M in NP to L. If M is polynomial-time reducible to L, that is not a statement on M's NP-completeness (unless P=NP), but a reaffirmation of L's NP-completeness. 
+    False. If L is an NP-complete language, it means that there exists a polynomial-time transformation from any language M ∈ NP to L. If M is polynomial-time reducible to L, that is not a statement on M's NP-completeness (unless P=NP), but a reaffirmation of L's NP-completeness. 
 
 
 3. Can { aᵏbᵏ | 0 ≤ k } be considered a regular language?
@@ -14,7 +14,7 @@
         x = ε
         y = aᵏbᵏ
         z = ε
-    Pumping y would not produce a string in L--'a' could follow a 'b'.
+    Pumping y would not produce a string in L; 'a' could follow a 'b'.
 
     If the string were split as:
         x = aᵏ
@@ -27,6 +27,7 @@
     Pumping y would result in more 'b' than 'a', or more 'a' than 'b', repectively. 
 
 4. Are there deterministic polynomial time algorithms for some NP-complete problems? Briefly explain your answer.
+
     Of course. It may be trivially demonstrated that P = NP by setting N equal to 1. Finding polynomial time algorithms for NP-complete problems is left as an exercise for the reader. 
     
     In reality: perhaps. To date, no deterministic polynomial time algorithm has been found for an NP-complete problem. If one is found, the class NP will collapse into P--a deterministic polynomial time solution will exist for all problems in NP.
@@ -38,7 +39,8 @@
 
 
 6. True of false: context free grammars can generate languages that Turing machines cannot recognize. Briefly explain your answer.
-    False. Where to begin?
+
+    False. Surely the CYK algorithm is a proof-by-construction to the contrary. 
     
 7. Why can the functions Turing machines are able to compute and the primitive recursive functions not be considered equivalent?
 
@@ -55,15 +57,15 @@
 ------------------------------------------------------------------------
 
 1. Consider the LongWayHome problem (LWHP): here we are given a set of cities that is fully connected via roads that have different costs and the goal is to find the longest way home via a route through all the cities. Formally
-    LWHP = {<G,s,t,w> | G is a directed Hamiltonian graph with a maximum weight w from s to t. }
-Show that LWHP is NP-hard.
+    LWHP = {<G,s,t,w> | G is directed weighted graph with a maximal Hamiltonian path of weight w from s to t.}
+Show that LWHP is NP-hard. 
 
-    A problem H is considered NP-hard, when every problem I in NP can be transformed via a polynomial-time reduction into H. A problem J is considered NP-complete if every problem in I in NP can be transformed via a polynomial-time reduction into J. Thus, we may demonstrate that LWHP is NP-hard by constructing a polynomial time reduction from a J to H. That is to say, J ≤ H. 
-
-    We'll borrow the insight of Richard Carp, who proved in 1972 that 21 problems--one of which was the directed hamiltonian path problem--were NP complete. We construct a reduction from HAMPATH
-        <G,s,t> ∈ HAMPATH iff f(<G,s,t>) ∈ LWHP
-    where f(<G,s,t>) = <G',s,t,m>, where G' is a transformation of G in which each edge's weight has been replaced with 1, and m is the number of vertices in G.
+    We'll show that a reduction can be constructed from an already-known NPC problem. We construct a reduction from HAMPATH
+        <G,s,t> ∈ HAMPATH ⇔ f(<G,s,t>) ∈ LWHP
+    where f(<G,s,t>) = <G,s,t,m>. The longest path will where G' is a transformation of G in which each edge's weight has been replaced with 1, and m is the number of vertices in G. The graph G has a Hamiltonian path if and only if the longest path of G' has a length of m-1. Thus, the decision version of this problem is ∈ NP-Hard, since a polynomial time reduction can be constructed since any problem Pₖ ∈ NP can be reduced in polynomial-time into Pᵢ ∈ NP-Hard.
     
+    The lecture slides state that a Pᵢ ∈ NP-Hard must also not ∉ NP, although I'm not sure this is accurate. Regardless, we can show that a verifier for LWHP cannot run in deterministic polynomial time. There can be as many as |v|! Hamiltonian paths in a graph G; while HAMPATH can be verified in PTIME, the exponential solution size means that this optimization-focused version of HAMPATH requires exponential time to verify. 
+
 
 2. Show that P-space is closed under complementation.
 
@@ -72,7 +74,11 @@ Show that LWHP is NP-hard.
     Even if this were not true for the time complexity of P, elevating M' into NPTIME, we know by Savitch's Theorem that no major gains in space complexity could result. 
 
 
-3. Show that A is Turing-recognizable iff A is a mapping reducible from ATM, that is, A ≤ₘ ATM.
+3. Show that A is Turing-recognizable iff A ≤ₘ ATM.
+
+    If A ≤ₘ Aᴛ ᴍ, then by Theorem 5.28, A is Turing-recognizable. If A is Turing recognizable, let B be a recognizer. We construct the mapping
+        s ∈ A ⇔ f(s) ∈ Aᴛ ᴍ,
+    where f(s) = <M,s>. 
     
 4. Consider the problem of determining whether a DFA and a regular expression are equivalent. Express this problem as a language and show that it is decidable.
 
@@ -90,10 +96,16 @@ Show that LWHP is NP-hard.
 5. Compute the normal forms of the following expressions:
 
     A (λx.x+1)(λx.xx)(λx.1)
-        (λ(λx.xx).x+1)(λx.1)        Apply second term to first term
-        (λ(λx.xx).(λx.xx)+1)(λx.1)  Replace instances of 'x' in body
-        ((λx.xx)+1)(λx.1)           Reduce to just the body
-                                    Well, that's not a valid l.e.
+        =(λ(λx.xx).x+1)(λx.1)       Sub. t2 into t1
+        =(λ(λx.xx).(λx.xx)+1)(λx.1) Sub. all x ∈ body of t1
+        =((λx.xx)+1)(λx.1)          Remove λ, leave the body 
+    
+    Unfortunately, t1 isn't a really lambda expression anymore --it's just a body. If we stretch our imagination beyond what we covered in class, we can simplify it further:
+        =((λx.xx)+1)(λx.1) 
+        =((λ(λx.1).xx)+1)(λx.1) 
+        =((λ(λx.1).(λx.1)(λx.1))+1)
+        =((λx.1)(λx.1))+1)
+    
         
     B (λx.x x)(λy.y y)
         =(λ(λy.y y).x x)
@@ -104,21 +116,22 @@ Show that LWHP is NP-hard.
      │  =(λ(λy.y y).(λy.y y) (λy.y y))
      │  =(λy.y y)(λy.y y)
      ╰╼ ⋮ 
+     
 
 6. Show that the language:
     L = { aⁱbʲcᵏ | Σ = {a,b,c} and i ≥ 0, j ≥ i, k ≥ j }
 is not context-free.
 
-    We will assume that the language L is context free, meaning that there exists an integer p≥1 such that every string s in L that is of length greater than or equal to p can be written as
+    We will assume that the language L is context free, meaning that there exists an integer p≥1 such that every string s ∈ L that is of length greater than or equal to p can be written as
         s = uVxYz
     such that
         1. |vxy| ≤ p,
         2. |vy| ≥ 1, and
-        3. uvⁿxyⁿz is in L for all n ≥ 0.
+        3. uvⁿxyⁿz is ∈ L for all n ≥ 0.
         
     The language L' is a strict subset of the language L', defined by
         L = { aⁱbʲcᵏ | Σ = {a,b,c} and i = j = k}
-    We will demonstrate that there exists a set of strigs in L, described by L', that cannot be written in the form s. 
+    We will demonstrate that there exists a set of strigs ∈ L, described by L', that cannot be written in the form s. 
 
     The substrings v and y must fall within the aⁱbʲcᵏ in the following ways:
     Case    aⁱ      bʲ      cᵏ
@@ -129,7 +142,7 @@ is not context-free.
        5                    v,y
        6    v               y
      
-    Contraditions in which pumping makes s not in L:
+    Contraditions in which pumping makes s ∉ L:
     Case 1:
         Pumping increases the number of 'a', but not the number of 'b' and 'c'. The number of 'c' must be greater than or equal to the number of 'b'.
     Case 2:
@@ -143,4 +156,4 @@ is not context-free.
     Case 6:
         Pumping increases the number of 'a' and 'c', but the number of 'a' must be greater than the number of 'b'.
         
-    There is no configuration in which all strings in L could meet the requirements of the pumping lemma.
+    There is no configuration in which all strings ∈ L could meet the requirements of the pumping lemma.
