@@ -1,0 +1,146 @@
+1. What is the Church-Turing thesis?
+
+    The Church-Turing thesis is the class of computable problems (anything that one could do with a pencil and paper) are computable by the class of equivalent machines that include Church's lambda calculus and Alan Turing's automatic machines.
+
+
+2. True or false: If L is an NP-complete language and M is polynomial-time reducible to L, that is M ≤ L, then M is also an NP-complete language.
+
+    False. If L is an NP-complete language, it means that there exists a polynomial-time transformation from any language M in NP to L. If M is polynomial-time reducible to L, that is not a statement on M's NP-completeness (unless P=NP), but a reaffirmation of L's NP-completeness. 
+
+
+3. Can { aᵏbᵏ | 0 ≤ k } be considered a regular language?
+
+    We'll show that such a language cannot be regular using a proof by contradiction. If we assume that L is regular, it holds that the pumping lemma holds for L. Let's consider palindromes in the form aⁿbⁿaⁿ. The pumping lemma states that we should be able to split such a string into three components, x y and z. If we split the string thusly:
+        x = ε
+        y = aᵏbᵏ
+        z = ε
+    Pumping y would not produce a string in L--'a' could follow a 'b'.
+
+    If the string were split as:
+        x = aᵏ
+        y = bᵏ
+        z = ε
+    Or as:
+        x = ε
+        y = aᵏ
+        z = bᵏ
+    Pumping y would result in more 'b' than 'a', or more 'a' than 'b', repectively. 
+
+4. Are there deterministic polynomial time algorithms for some NP-complete problems? Briefly explain your answer.
+    Of course. It may be trivially demonstrated that P = NP by setting N equal to 1. Finding polynomial time algorithms for NP-complete problems is left as an exercise for the reader. 
+    
+    In reality: perhaps. To date, no deterministic polynomial time algorithm has been found for an NP-complete problem. If one is found, the class NP will collapse into P--a deterministic polynomial time solution will exist for all problems in NP.
+    
+
+5. What is the difference between NP-complete and NP-hard problems?
+    
+    We say a problem Pᵢ ∈ NPH if every problem Pₖ ∈ NP can be reduced in polynomial-time into Pᵢ. A problem Pⱼ is said to be ∈ NPC, similarly, if every problem Pₖ ∈ NP can be reduced in polynomial-time into Pᵢ. However, we add the requirement that a Pᵢ ∈ NPC must also ∈ NP. The set of problems ∈ NPH, informally speaking, are at least as hard as those ∈ NPC, but some are potentially much harder. 
+
+
+6. True of false: context free grammars can generate languages that Turing machines cannot recognize. Briefly explain your answer.
+    False. Where to begin?
+    
+7. Why can the functions Turing machines are able to compute and the primitive recursive functions not be considered equivalent?
+
+    Turing machines are subject to the halting problem--i.e., it is non-trivial to determine whether an arbitrary turing machine is a decider--primitive recursive functions however, are not. All primitive recursive functions are gaurenteed to halt their computation. Thus, it follows that the set of all programs that may be described by primitive recursive functions is a strict subset of those which may be described by turing machines. At the very least, we can say with certainty that a program such as "while(true){}" could not be described with primitive recursive functions. 
+    
+    However, while we can say that "a primitive recursive function is gaurunteed to halt", we may not state that "a function that is gaurunteed to halt is primitive recursive." The set of programs that are primitive recursive is not equal to the set of total computable functions. The Ackermann function was the famous first counterpoint to this hypothesis. 
+    
+    
+8. What do we mean when we say “NP is the class of problems whose solutions are difficult to find but easy to verify”?
+
+    We mean, simply, that presently, there is a class of problems that are known to be solvable in non-deterministic polynomial time, but have no known solution in deterministic polynomial time. However, it is possible to create a decider that can verify if a purported solution to any given problem in NP is valid or not in determinisitc polynomial time.
+
+
+------------------------------------------------------------------------
+
+1. Consider the LongWayHome problem (LWHP): here we are given a set of cities that is fully connected via roads that have different costs and the goal is to find the longest way home via a route through all the cities. Formally
+    LWHP = {<G,s,t,w> | G is a directed Hamiltonian graph with a maximum weight w from s to t. }
+Show that LWHP is NP-hard.
+
+    A problem H is considered NP-hard, when every problem I in NP can be transformed via a polynomial-time reduction into H. A problem J is considered NP-complete if every problem in I in NP can be transformed via a polynomial-time reduction into J. Thus, we may demonstrate that LWHP is NP-hard by constructing a polynomial time reduction from a J to H. That is to say, J ≤ H. 
+
+    We'll borrow the insight of Richard Carp, who proved in 1972 that 21 problems--one of which was the directed hamiltonian path problem--were NP complete. We construct a reduction from HAMPATH
+        <G,s,t> ∈ HAMPATH iff f(<G,s,t>) ∈ LWHP
+    where f(<G,s,t>) = <G',s,t,m>, where G' is a transformation of G in which each edge's weight has been replaced with 1, and m is the number of vertices in G.
+    
+
+2. Show that P-space is closed under complementation.
+
+    Any of the deterministic complexity classes, including both space and time classes, are closed under completion. One may reduce any decision of M into a decision of M' by replacing the accepting states of M with rejecting states, and the rejecting states of M with accepting states. By simply exchanging the halting states of a decider M, we change neither the time nor space requirements of the decider--regardless the 'size' of the problem, we can always complement an M with that one additional step.
+    
+    Even if this were not true for the time complexity of P, elevating M' into NPTIME, we know by Savitch's Theorem that no major gains in space complexity could result. 
+
+
+3. Show that A is Turing-recognizable iff A is a mapping reducible from ATM, that is, A ≤ₘ ATM.
+    
+4. Consider the problem of determining whether a DFA and a regular expression are equivalent. Express this problem as a language and show that it is decidable.
+
+    We define the language G: 
+        G = {<A,R> | 
+                where A is a DFA,
+                R is a regular expression, 
+                and L(A) = L(R) }
+
+    We demonstrate that G is decidable by constructing a decider. Using Thomson's algorithm, we transform R into an equivalent NFA, R'. The textbook additionally describes a procedure for converting an NFA into an equivalent DFA in Theorem 1.39, and translate R' into an NFA R''. Finally, we utilize EQDFA, defined as:
+        EQDFA = {<A,B> | A and B are DFAs, and L(A) = L(B)}
+    in the proof of Theorem 4.5 and the slides. We construct a decider M that simulates EQDFA on <A, R''>. If EQDFA HALT-ACCEPTs, so to does M; if EQDFA HALT-REJECTs, so to does M. 
+    
+    
+5. Compute the normal forms of the following expressions:
+
+    A (λx.x+1)(λx.xx)(λx.1)
+        (λ(λx.xx).x+1)(λx.1)        Apply second term to first term
+        (λ(λx.xx).(λx.xx)+1)(λx.1)  Replace instances of 'x' in body
+        ((λx.xx)+1)(λx.1)           Reduce to just the body
+                                    Well, that's not a valid l.e.
+        
+    B (λx.x x)(λy.y y)
+        =(λ(λy.y y).x x)
+        =(λ(λy.y y).(λy.y y) (λy.y y))
+     ╭→ =(λy.y y)(λy.y y)
+     │  =(λ(λy.y y).y y)
+     │  =(λ(λy.y y).y y)
+     │  =(λ(λy.y y).(λy.y y) (λy.y y))
+     │  =(λy.y y)(λy.y y)
+     ╰╼ ⋮ 
+
+6. Show that the language:
+    L = { aⁱbʲcᵏ | Σ = {a,b,c} and i ≥ 0, j ≥ i, k ≥ j }
+is not context-free.
+
+    We will assume that the language L is context free, meaning that there exists an integer p≥1 such that every string s in L that is of length greater than or equal to p can be written as
+        s = uVxYz
+    such that
+        1. |vxy| ≤ p,
+        2. |vy| ≥ 1, and
+        3. uvⁿxyⁿz is in L for all n ≥ 0.
+        
+    The language L' is a strict subset of the language L', defined by
+        L = { aⁱbʲcᵏ | Σ = {a,b,c} and i = j = k}
+    We will demonstrate that there exists a set of strigs in L, described by L', that cannot be written in the form s. 
+
+    The substrings v and y must fall within the aⁱbʲcᵏ in the following ways:
+    Case    aⁱ      bʲ      cᵏ
+       1    v,y
+       2    v       y
+       3            v,y
+       4            v,      y
+       5                    v,y
+       6    v               y
+     
+    Contraditions in which pumping makes s not in L:
+    Case 1:
+        Pumping increases the number of 'a', but not the number of 'b' and 'c'. The number of 'c' must be greater than or equal to the number of 'b'.
+    Case 2:
+        Pumping increases the number of 'a' and 'b', but not the number of 'c'. The number of 'c' must be greater than or equal to the number of 'b'.
+    Case 3:
+        Pumping increases the number 'b', but not the number of 'c'. The number of 'c' must be greater than or equal to the number of 'b'.
+    Case 4:
+        Pumping increases the number of 'b' and 'c' such that then number 'b' and 'c' are equal, but this locks the number of 'a' to a constant and excludes string in which k > j.
+    Case 5:
+        Pumping increases the number of 'c', but locks the number of 'a' and 'b' to constants.
+    Case 6:
+        Pumping increases the number of 'a' and 'c', but the number of 'a' must be greater than the number of 'b'.
+        
+    There is no configuration in which all strings in L could meet the requirements of the pumping lemma.
